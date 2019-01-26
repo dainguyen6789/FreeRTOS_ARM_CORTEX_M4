@@ -1,0 +1,6 @@
+22:22:06 **** Incremental Build of configuration Debug for project HelloWorld_STM32_Dainguyen ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+
+22:22:07 Build Finished (took 1s.287ms)
+

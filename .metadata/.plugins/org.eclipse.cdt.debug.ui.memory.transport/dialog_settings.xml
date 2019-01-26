@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="EXPORT_DIALOG">
+		<item value="0x2001364c" key="Start"/>
+		<item value="0x2003227c" key="End"/>
+		<item value="C:\Users\Utilisateur\workspace\Semaphore\Segger_Memory_Dump\HelloWorld_Segger_MemDump_24Jan19_2314.SVdat" key="File"/>
+		<item value="PlainTextExporter" key="SELECTED_EXPORTER"/>
+		<item value="0x2001364c" key="Initial address"/>
+	</section>
+</section>
