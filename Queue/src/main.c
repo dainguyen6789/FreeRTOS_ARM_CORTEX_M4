@@ -24,6 +24,22 @@ typedef struct APP_CMD
 	uint8_t COMMAND;
 	uint8_t ARG[10];
 }APP_CMD_t;
+uint8_t command_buffer[20];
+uint8_t command_len;
+
+char menu[]={
+		"\
+		\\n LED On....1\
+		\r\n LED OFF... 2\
+		\r\n LED TOGGLE...3 \
+		\r\n LED TOGGLE OFF...4  \
+		\r\n LED READ STATUS...5\
+		\r\n RTC PRINT Date TIME...6\
+		\r\n EXIT APP...0\
+		\r\n Type your option here: "
+};
+
+
 TaskHandle_t xTaskHandle_1=NULL;
 TaskHandle_t xTaskHandle_2=NULL;
 TaskHandle_t xTaskHandle_3=NULL;
@@ -31,7 +47,7 @@ TaskHandle_t xTaskHandle_4=NULL;
 
 QueueHandle_t command_queue=NULL;
 QueueHandle_t uart_write_queue=NULL;
-
+void printmsg(char *msg);
 void vTask1_menu_display(void *params);
 void vTask2_command_handling(void *params);
 void vTask3_command_processing(void *params);
@@ -45,7 +61,6 @@ extern void initialise_monitor_handles();
 #endif
 
 static void prvSetupHardware();
-void printmsg(char *msg);
 
 void printmsg(char *msg)
 {
@@ -67,10 +82,9 @@ int main(void)
 	SystemCoreClockUpdate();
 	prvSetupHardware();
 
-	sprintf(msg,"hello Dai Nguyen aaa\n");
-	printmsg(msg);
-	SEGGER_SYSVIEW_Conf();
-	SEGGER_SYSVIEW_Start();
+
+	//SEGGER_SYSVIEW_Conf();
+	//SEGGER_SYSVIEW_Start();
 	//=======================================
 	// create queue
 	command_queue=xQueueCreate(10,sizeof(APP_CMD_t*));
@@ -81,7 +95,7 @@ int main(void)
 
 	if(command_queue!=NULL)
 	{
-		xSemaphoreGive(xSemaphore);
+		//xSemaphoreGive(xSemaphore);
 
 		xTaskCreate(vTask1_menu_display,"Task 1 Menu",500,NULL,1,&xTaskHandle_1);//
 		xTaskCreate(vTask2_command_handling,"Task 2 CMD Handling",500,NULL,1,&xTaskHandle_2);//
@@ -89,12 +103,22 @@ int main(void)
 		xTaskCreate(vTask4_uart_write,"Task 4 UART Write",500,NULL,1,&xTaskHandle_4);//
 		vTaskStartScheduler();
 	}
+	for(;;);
 }
 
 
 void vTask1_menu_display(void *params)
 {
+	char *pData = menu;
+	while(1)
+	{
+		//for(int i=0;i<=strlen(msg);i++)
+			xQueueSend(uart_write_queue,&pData,portMAX_DELAY);
+			xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
 
+		//sprintf(msg,menu);
+		//printmsg(msg);
+	}
 }
 
 void vTask2_command_handling(void *params)
@@ -108,6 +132,12 @@ void vTask3_command_processing(void *params)
 }
 void vTask4_uart_write(void *params)
 {
+	char  *pData=NULL;
+	while(1)
+	{
+			xQueueReceive(uart_write_queue,&pData,portMAX_DELAY);
+			printmsg(pData);
+	}
 
 }
 void USART1_IRQHandler()
@@ -152,7 +182,7 @@ static void prvSetupUSART(void)
 	USART_Init(USART2,&uart2_init);
 	USART_Cmd(USART2,ENABLE);
 	// Set USART prioprity
-	NVIC_SetPriority(USART2_IRQn,5);s
+	NVIC_SetPriority(USART2_IRQn,5);
 	//enable UART reception INT
 	USART_ITConfig(USART2,USART_IT_RXNE,ENABLE);
 
