@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="BUFFER_SIZE" key="selection"/>
+		<item value="USART" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="usart"/>
+			<item value="SYSVIEW_FREERTOS_MAX_NOF_TASKS "/>
 			<item value="buffer_size"/>
 			<item value="SEGGER_SYSVIEW_CORE"/>
 			<item value="xHigherPriorityTaskWoken"/>
 			<item value="xSemaphoreGiveFromISR"/>
 			<item value="xSemaphoreCreateCounting"/>
 			<item value="exti"/>
-			<item value="configkernel"/>
-			<item value="GPIOA"/>
 		</list>
 		<list key="replacehistory">
 		</list>

@@ -39,7 +39,10 @@ src/main.o: ../src/main.c \
  C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/portable/GCC/ARM_CM4F/portmacro.h \
  C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/mpu_wrappers.h \
  C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/task.h \
- C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/list.h
+ C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/list.h \
+ C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/semphr.h \
+ C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/queue.h \
+ C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/task.h
 
 C:/Users/Utilisateur/workspace/Semaphore/CMSIS/device/stm32f4xx.h:
 
@@ -122,3 +125,9 @@ C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/
 C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/task.h:
 
 C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/list.h:
+
+C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/semphr.h:
+
+C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/queue.h:
+
+C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include/task.h:

@@ -16,8 +16,8 @@
 #include "task.h"
 #include "FreeRTOSConfig.h"
 #include "semphr.h"
-TaskHandle_t xTaskHandle_1=NULL;
-TaskHandle_t xTaskHandle_2=NULL;
+TaskHandle_t xTaskHandle_1="task1";
+TaskHandle_t xTaskHandle_2="task2";
 void vTask1(void *params);
 void vTask2(void *params);
 

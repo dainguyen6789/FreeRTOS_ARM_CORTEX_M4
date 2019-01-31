@@ -1,0 +1,148 @@
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Ac6
+  * @version V1.0
+  * @date    01-December-2013
+  * @brief   Default main function.
+  ******************************************************************************
+*/
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "stm32f4xx.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "FreeRTOSConfig.h"
+#include "semphr.h"
+#include "queue.h"
+#include "timers.h"
+typedef struct APP_CMD
+
+{
+	uint8_t COMMAND;
+	uint8_t ARG[10];
+}APP_CMD_t;
+TaskHandle_t xTaskHandle_1=NULL;
+TaskHandle_t xTaskHandle_2=NULL;
+TaskHandle_t xTaskHandle_3=NULL;
+TaskHandle_t xTaskHandle_4=NULL;
+
+void vTask1_menu_display(void *params);
+void vTask2_command_handling(void *params);
+void vTask3_command_processing(void *params);
+void vTask4_uart_write(void *params);
+
+
+SemaphoreHandle_t xSemaphore=NULL;
+
+#ifdef USE_SEMIHOSTING
+extern void initialise_monitor_handles();
+#endif
+
+static void prvSetupHardware();
+void printmsg(char *msg);
+
+void printmsg(char *msg)
+{
+	for(uint32_t i=0;i<strlen(msg);i++)
+	{
+		while(USART_GetFlagStatus(USART2,USART_FLAG_TXE)!=SET);
+		USART_SendData(USART2,msg[i]);
+	}
+}
+char msg[250];
+int main(void)
+{
+#ifdef USE_SEMIHOSTING
+	initialise_monitor_handles();
+	printf("Hello Dai Nguyen");
+#endif
+	DWT->CTRL|=(1<<0);
+	RCC_DeInit();
+	SystemCoreClockUpdate();
+	prvSetupHardware();
+
+	sprintf(msg,"hello Dai Nguyen aaa\n");
+	printmsg(msg);
+	SEGGER_SYSVIEW_Conf();
+	SEGGER_SYSVIEW_Start();
+	//=======================================
+	// create queue
+	xQueueCreate(10,sizeof(APP_CMD_t*));
+	//=======================================
+
+	xSemaphore = xSemaphoreCreateBinary();
+
+	if(xSemaphore!=NULL)
+	{
+		xSemaphoreGive(xSemaphore);
+
+		xTaskCreate(vTask1_menu_display,"Task 1 Menu",500,NULL,1,&xTaskHandle_1);//
+		xTaskCreate(vTask2_command_handling,"Task 2 CMD Handling",500,NULL,1,&xTaskHandle_2);//
+		xTaskCreate(vTask3_command_processing,"Task 3 CMD Process",500,NULL,1,&xTaskHandle_3);//
+		xTaskCreate(vTask4_uart_write,"Task 4 UART Write",500,NULL,1,&xTaskHandle_4);//
+		vTaskStartScheduler();
+	}
+}
+
+
+void vTask1_menu_display(void *params)
+{
+
+}
+
+void vTask2_command_handling(void *params)
+{
+
+}
+
+void vTask3_command_processing(void *params)
+{
+
+}
+void vTask4_uart_write(void *params)
+{
+
+}
+static void prvSetupUSART(void)
+{
+	GPIO_InitTypeDef gpio_uart_pins;
+	USART_InitTypeDef uart2_init;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
+
+	// zeroing every elements of the structure
+	memset(&gpio_uart_pins,0,sizeof(gpio_uart_pins));
+	//PA2: RX; Pa3: RX
+
+	//void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
+	gpio_uart_pins.GPIO_Pin=GPIO_Pin_2|GPIO_Pin_3;
+	gpio_uart_pins.GPIO_Mode=GPIO_Mode_AF;
+	gpio_uart_pins.GPIO_PuPd=GPIO_PuPd_UP;
+	gpio_uart_pins.GPIO_Speed = GPIO_High_Speed;
+
+	GPIO_Init(GPIOA,&gpio_uart_pins );
+	// AF mode setting
+	GPIO_PinAFConfig(GPIOA,GPIO_PinSource2,GPIO_AF_USART2);// TX
+	GPIO_PinAFConfig(GPIOA,GPIO_PinSource3,GPIO_AF_USART2);// TX
+
+	// Uart parameter init
+	// USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
+	memset(&uart2_init,0,sizeof(uart2_init));
+	uart2_init.USART_BaudRate=115200;
+	uart2_init.USART_HardwareFlowControl=USART_HardwareFlowControl_None;
+	uart2_init.USART_Mode=USART_Mode_Tx|USART_Mode_Rx;
+	uart2_init.USART_Parity=USART_Parity_No;
+	uart2_init.USART_StopBits=USART_StopBits_1;
+	uart2_init.USART_WordLength=USART_WordLength_8b;
+	USART_Init(USART2,&uart2_init);
+	USART_Cmd(USART2,ENABLE);
+	}
+
+static void prvSetupHardware(void)
+{
+	prvSetupUSART();
+
+	}

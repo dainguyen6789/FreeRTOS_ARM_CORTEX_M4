@@ -1,25 +1,27 @@
-11:57:27 **** Incremental Build of configuration Debug for project Semaphore ****
+21:24:00 **** Incremental Build of configuration Debug for project Semaphore ****
 make -j8 all 
 Building file: ../src/main.c
 Invoking: MCU GCC Compiler
 C:\Users\Utilisateur\workspace\Semaphore\Debug
 arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F4 -DSTM32F407VGTx -DSTM32F407G_DISC1 -DDEBUG -DSTM32F40XX -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -I"C:/Users/Utilisateur/workspace/Semaphore/StdPeriph_Driver/inc" -I"C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/Segger/Config" -I"C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/Segger/OS" -I"C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/Segger/SEGGER" -I"C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/portable/GCC/ARM_CM4F" -I"C:/Users/Utilisateur/workspace/Semaphore/Config" -I"C:/Users/Utilisateur/workspace/Semaphore/ThirdParty/FreeRTOS/org/Source/include" -I"C:/Users/Utilisateur/workspace/Semaphore/inc" -I"C:/Users/Utilisateur/workspace/Semaphore/CMSIS/device" -I"C:/Users/Utilisateur/workspace/Semaphore/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
-In file included from ../src/main.c:13:0:
+In file included from ../src/main.c:14:0:
 C:/Users/Utilisateur/workspace/Semaphore/CMSIS/device/stm32f4xx.h:108:0: warning: "STM32F40_41xxx" redefined
    #define STM32F40_41xxx
  
 <command-line>:0:0: note: this is the location of the previous definition
+../src/main.c:19:28: warning: initialization from incompatible pointer type [-Wincompatible-pointer-types]
+ TaskHandle_t xTaskHandle_1="task1";
+                            ^~~~~~~
+../src/main.c:20:28: warning: initialization from incompatible pointer type [-Wincompatible-pointer-types]
+ TaskHandle_t xTaskHandle_2="task2";
+                            ^~~~~~~
 ../src/main.c: In function 'main':
-../src/main.c:69:2: warning: implicit declaration of function 'SEGGER_SYSVIEW_Conf' [-Wimplicit-function-declaration]
+../src/main.c:55:2: warning: implicit declaration of function 'SEGGER_SYSVIEW_Conf' [-Wimplicit-function-declaration]
   SEGGER_SYSVIEW_Conf();
   ^~~~~~~~~~~~~~~~~~~
-../src/main.c:70:2: warning: implicit declaration of function 'SEGGER_SYSVIEW_Start' [-Wimplicit-function-declaration]
+../src/main.c:56:2: warning: implicit declaration of function 'SEGGER_SYSVIEW_Start' [-Wimplicit-function-declaration]
   SEGGER_SYSVIEW_Start();
   ^~~~~~~~~~~~~~~~~~~~
-../src/main.c: In function 'vTask1_handler':
-../src/main.c:97:4: warning: implicit declaration of function 'SEGGER_SYSVIEW_Print' [-Wimplicit-function-declaration]
-    SEGGER_SYSVIEW_Print("Task1 is yielding");
-    ^~~~~~~~~~~~~~~~~~~~
 Finished building: ../src/main.c
  
 Building target: Semaphore.elf
@@ -32,10 +34,10 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "Semaphore.elf" "Semaphore.bin"
 arm-none-eabi-size "Semaphore.elf"
    text	   data	    bss	    dec	    hex	filename
-  14300	   1128	  88292	 103720	  19528	Semaphore.elf
+  17760	   1128	  88292	 107180	  1a2ac	Semaphore.elf
  
-11:58:27 **** Programming project Semaphore on chip ****
-"C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.externaltools.openocd.win32_1.21.0.201811131241\\tools\\openocd\\bin\\openocd.exe" -f stm32.flash.7251736928705925649.cfg -s "C:\\Users\\Utilisateur\\workspace\\Semaphore" -s "C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.debug_2.3.1.201811131241\\resources\\openocd\\st_scripts" -c "program Debug/Semaphore.elf verify reset exit" 
+21:26:26 **** Programming project Semaphore on chip ****
+"C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.externaltools.openocd.win32_1.21.0.201811131241\\tools\\openocd\\bin\\openocd.exe" -f stm32.flash.3994998449414737112.cfg -s "C:\\Users\\Utilisateur\\workspace\\Semaphore" -s "C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.debug_2.3.1.201811131241\\resources\\openocd\\st_scripts" -c "program Debug/Semaphore.elf verify reset exit" 
 Open On-Chip Debugger 0.10.0-dev-00015-gaaf1808 (2018-11-13-13:07)
 Licensed under GNU GPL v2
 For bug reports, read
@@ -47,13 +49,13 @@ adapter speed: 1800 kHz
 Info : clock speed 1800 kHz
 Info : STLINK v2.1 JTAG v25 API v2 M14 VID 0x0483 PID 0x374B
 Info : using stlink api v2
-Info : Target voltage: 2.915608
+Info : Target voltage: 2.912152
 Info : Stlink adapter speed set to 1800 kHz
 Info : STM32F407VGTx.cpu: hardware has 6 breakpoints, 4 watchpoints
 Info : Stlink adapter speed set to 1800 kHz
 adapter speed: 1800 kHz
 target halted due to debug-request, current mode: Thread 
-xPSR: 0x01000000 pc: 0x080041b8 msp: 0x20020000
+xPSR: 0x01000000 pc: 0x080033f8 msp: 0x20020000
 configuring PLL
 Info : Stlink adapter speed set to 4000 kHz
 adapter speed: 4000 kHz
@@ -63,14 +65,14 @@ Info : device id = 0x10076413
 Info : flash size = 1024kbytes
 target halted due to breakpoint, current mode: Thread 
 xPSR: 0x61000000 pc: 0x20000046 msp: 0x20020000
-wrote 16384 bytes from file Debug/Semaphore.elf in 0.638977s (25.040 KiB/s)
+wrote 32768 bytes from file Debug/Semaphore.elf in 1.032406s (30.996 KiB/s)
 ** Programming Finished **
 ** Verify Started **
 target halted due to breakpoint, current mode: Thread 
 xPSR: 0x61000000 pc: 0x2000002e msp: 0x20020000
 target halted due to breakpoint, current mode: Thread 
 xPSR: 0x61000000 pc: 0x2000002e msp: 0x20020000
-verified 15452 bytes in 0.208910s (72.231 KiB/s)
+verified 18912 bytes in 0.303839s (60.785 KiB/s)
 ** Verified OK **
 ** Resetting Target **
 Info : Stlink adapter speed set to 1800 kHz

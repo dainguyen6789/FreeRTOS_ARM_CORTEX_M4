@@ -1,5 +1,5 @@
-11:58:27 **** Programming project Semaphore on chip ****
-"C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.externaltools.openocd.win32_1.21.0.201811131241\\tools\\openocd\\bin\\openocd.exe" -f stm32.flash.7251736928705925649.cfg -s "C:\\Users\\Utilisateur\\workspace\\Semaphore" -s "C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.debug_2.3.1.201811131241\\resources\\openocd\\st_scripts" -c "program Debug/Semaphore.elf verify reset exit" 
+21:26:26 **** Programming project Semaphore on chip ****
+"C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.externaltools.openocd.win32_1.21.0.201811131241\\tools\\openocd\\bin\\openocd.exe" -f stm32.flash.3994998449414737112.cfg -s "C:\\Users\\Utilisateur\\workspace\\Semaphore" -s "C:\\Ac6\\SystemWorkbench\\plugins\\fr.ac6.mcu.debug_2.3.1.201811131241\\resources\\openocd\\st_scripts" -c "program Debug/Semaphore.elf verify reset exit" 
 Open On-Chip Debugger 0.10.0-dev-00015-gaaf1808 (2018-11-13-13:07)
 Licensed under GNU GPL v2
 For bug reports, read
@@ -11,13 +11,13 @@ adapter speed: 1800 kHz
 Info : clock speed 1800 kHz
 Info : STLINK v2.1 JTAG v25 API v2 M14 VID 0x0483 PID 0x374B
 Info : using stlink api v2
-Info : Target voltage: 2.915608
+Info : Target voltage: 2.912152
 Info : Stlink adapter speed set to 1800 kHz
 Info : STM32F407VGTx.cpu: hardware has 6 breakpoints, 4 watchpoints
 Info : Stlink adapter speed set to 1800 kHz
 adapter speed: 1800 kHz
 target halted due to debug-request, current mode: Thread 
-xPSR: 0x01000000 pc: 0x080041b8 msp: 0x20020000
+xPSR: 0x01000000 pc: 0x080033f8 msp: 0x20020000
 configuring PLL
 Info : Stlink adapter speed set to 4000 kHz
 adapter speed: 4000 kHz
@@ -27,19 +27,19 @@ Info : device id = 0x10076413
 Info : flash size = 1024kbytes
 target halted due to breakpoint, current mode: Thread 
 xPSR: 0x61000000 pc: 0x20000046 msp: 0x20020000
-wrote 16384 bytes from file Debug/Semaphore.elf in 0.638977s (25.040 KiB/s)
+wrote 32768 bytes from file Debug/Semaphore.elf in 1.032406s (30.996 KiB/s)
 ** Programming Finished **
 ** Verify Started **
 target halted due to breakpoint, current mode: Thread 
 xPSR: 0x61000000 pc: 0x2000002e msp: 0x20020000
 target halted due to breakpoint, current mode: Thread 
 xPSR: 0x61000000 pc: 0x2000002e msp: 0x20020000
-verified 15452 bytes in 0.208910s (72.231 KiB/s)
+verified 18912 bytes in 0.303839s (60.785 KiB/s)
 ** Verified OK **
 ** Resetting Target **
 Info : Stlink adapter speed set to 1800 kHz
 adapter speed: 1800 kHz
 shutdown command invoked
 
-11:58:28 Build Finished (took 1s.388ms)
+21:26:30 Build Finished (took 3s.962ms)
 
