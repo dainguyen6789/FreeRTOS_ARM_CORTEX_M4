@@ -18,6 +18,32 @@
 #include "semphr.h"
 #include "queue.h"
 #include "timers.h"
+
+
+
+void printmsg(char *msg);
+void vTask1_menu_display(void *params);
+void vTask2_command_handling(void *params);
+void vTask3_command_processing(void *params);
+void vTask4_uart_write(void *params);
+static void prvSetupHardware();
+
+TaskHandle_t xTaskHandle_1=NULL;
+TaskHandle_t xTaskHandle_2=NULL;
+TaskHandle_t xTaskHandle_3=NULL;
+TaskHandle_t xTaskHandle_4=NULL;
+
+QueueHandle_t command_queue=NULL;
+QueueHandle_t uart_write_queue=NULL;
+
+
+
+SemaphoreHandle_t xSemaphore=NULL;
+
+#ifdef USE_SEMIHOSTING
+extern void initialise_monitor_handles();
+#endif
+
 typedef struct APP_CMD
 
 {
@@ -29,39 +55,18 @@ uint8_t command_len;
 
 char menu[]={
 		"\
-		\\n LED On....1\
-		\r\n LED OFF... 2\
-		\r\n LED TOGGLE...3 \
-		\r\n LED TOGGLE OFF...4  \
-		\r\n LED READ STATUS...5\
-		\r\n RTC PRINT Date TIME...6\
-		\r\n EXIT APP...0\
-		\r\n Type your option here: "
+		\\n 	LED On....1\
+		\r\n 	LED OFF... 2\
+		\r\n 	LED TOGGLE...3 \
+		\r\n 	LED TOGGLE OFF...4  \
+		\r\n 	LED READ STATUS...5\
+		\r\n 	RTC PRINT Date TIME...6\
+		\r\n 	EXIT APP...0\
+		\r\n 	Type your option here: "
 };
-
-
-TaskHandle_t xTaskHandle_1=NULL;
-TaskHandle_t xTaskHandle_2=NULL;
-TaskHandle_t xTaskHandle_3=NULL;
-TaskHandle_t xTaskHandle_4=NULL;
-
-QueueHandle_t command_queue=NULL;
-QueueHandle_t uart_write_queue=NULL;
-void printmsg(char *msg);
-void vTask1_menu_display(void *params);
-void vTask2_command_handling(void *params);
-void vTask3_command_processing(void *params);
-void vTask4_uart_write(void *params);
-
-
-SemaphoreHandle_t xSemaphore=NULL;
-
-#ifdef USE_SEMIHOSTING
-extern void initialise_monitor_handles();
-#endif
-
-static void prvSetupHardware();
-
+char count=0;
+uint8_t  command_buffer[20];
+char msg[250];
 void printmsg(char *msg)
 {
 	for(uint32_t i=0;i<strlen(msg);i++)
@@ -70,7 +75,6 @@ void printmsg(char *msg)
 		USART_SendData(USART2,msg[i]);
 	}
 }
-char msg[250];
 int main(void)
 {
 #ifdef USE_SEMIHOSTING
@@ -101,9 +105,10 @@ int main(void)
 		xTaskCreate(vTask2_command_handling,"Task 2 CMD Handling",500,NULL,1,&xTaskHandle_2);//
 		xTaskCreate(vTask3_command_processing,"Task 3 CMD Process",500,NULL,1,&xTaskHandle_3);//
 		xTaskCreate(vTask4_uart_write,"Task 4 UART Write",500,NULL,1,&xTaskHandle_4);//
+
 		vTaskStartScheduler();
 	}
-	for(;;);
+	//for(;;);
 }
 
 
@@ -123,12 +128,18 @@ void vTask1_menu_display(void *params)
 
 void vTask2_command_handling(void *params)
 {
-
+	while(1)
+	{
+		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
+		sprintf(msg,"Hello from Task 2");
+		printmsg(msg);
+	}
 }
 
 void vTask3_command_processing(void *params)
 {
-
+	while(1)
+	{}
 }
 void vTask4_uart_write(void *params)
 {
@@ -140,13 +151,26 @@ void vTask4_uart_write(void *params)
 	}
 
 }
-void USART1_IRQHandler()
+void USART2_IRQHandler()
 {
-	uint16_t data_byte;
+	//
+	uint16_t databyte;
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
 	if(USART_GetFlagStatus(USART2, USART_FLAG_RXNE))
 	{
-		data_byte=USART_ReceiveData(USART2);
+		databyte=USART_ReceiveData(USART2);
+		command_buffer[count]=databyte & 0xFF;
+		count++;
+		if(databyte=='\r')
+		{
+			count=0;
+			xTaskNotifyFromISR(xTaskHandle_1,0,eNoAction,&xHigherPriorityTaskWoken);
+			xTaskNotifyFromISR(xTaskHandle_2,0,eNoAction,&xHigherPriorityTaskWoken);
+		}
 	}
+
+
 }
 static void prvSetupUSART(void)
 {
@@ -184,6 +208,8 @@ static void prvSetupUSART(void)
 	// Set USART prioprity
 	NVIC_SetPriority(USART2_IRQn,5);
 	//enable UART reception INT
+	NVIC_EnableIRQ(USART2_IRQn);
+
 	USART_ITConfig(USART2,USART_IT_RXNE,ENABLE);
 
 	}
