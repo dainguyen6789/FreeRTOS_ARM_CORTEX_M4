@@ -85,7 +85,7 @@ int main(void)
 	RCC_DeInit();
 	SystemCoreClockUpdate();
 	prvSetupHardware();
-
+	GPIO_LD4_Setup();
 
 	//SEGGER_SYSVIEW_Conf();
 	//SEGGER_SYSVIEW_Start();
@@ -131,8 +131,15 @@ void vTask2_command_handling(void *params)
 	while(1)
 	{
 		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
-		sprintf(msg,"Hello from Task 2");
-		printmsg(msg);
+		//sprintf(msg,"Hello from Task 2");
+		//printmsg(msg);
+		if(command_buffer[0]=='1')
+			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+		else if(command_buffer[0]=='2')
+			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
+
+
+
 	}
 }
 
@@ -185,7 +192,7 @@ static void prvSetupUSART(void)
 
 	//void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
 	gpio_uart_pins.GPIO_Pin=GPIO_Pin_2|GPIO_Pin_3;
-	gpio_uart_pins.GPIO_Mode=GPIO_Mode_AF;
+	gpio_uart_pins.GPIO_Mode=GPIO_Mode_AF;// Alternate function
 	gpio_uart_pins.GPIO_PuPd=GPIO_PuPd_UP;
 	gpio_uart_pins.GPIO_Speed = GPIO_High_Speed;
 
@@ -217,5 +224,22 @@ static void prvSetupUSART(void)
 static void prvSetupHardware(void)
 {
 	prvSetupUSART();
+
+	}
+void GPIO_LD4_Setup(void)
+{
+	GPIO_InitTypeDef GPIO12_init;
+
+
+	GPIO12_init.GPIO_Pin=GPIO_Pin_12;
+	GPIO12_init.GPIO_Mode=GPIO_Mode_OUT;
+	GPIO12_init.GPIO_Speed=GPIO_High_Speed;
+	GPIO12_init.GPIO_OType=GPIO_OType_PP;
+	//GPIO12_init.GPIO_PuPd=GPIO_PuPd_UP;
+
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
+	GPIO_Init(GPIOD,&GPIO12_init);
+
+
 
 	}
