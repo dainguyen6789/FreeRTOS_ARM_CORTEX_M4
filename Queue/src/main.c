@@ -118,6 +118,9 @@ void vTask1_menu_display(void *params)
 	while(1)
 	{
 		//for(int i=0;i<=strlen(msg);i++)
+
+		 /* xQueueSend: Only for use with queues that have a length of one - so the queue is either
+		 * empty or full.*/
 			xQueueSend(uart_write_queue,&pData,portMAX_DELAY);
 			xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
 
@@ -137,6 +140,12 @@ void vTask2_command_handling(void *params)
 			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
 		else if(command_buffer[0]=='2')
 			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
+		else if(command_buffer[0]=='3')
+		{
+			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
+
+			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+		}
 
 
 
