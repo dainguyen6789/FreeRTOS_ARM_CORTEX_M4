@@ -18,7 +18,7 @@
 #include "semphr.h"
 #include "queue.h"
 #include "timers.h"
-
+#include "stm32f4xx_tim.h"
 
 
 void printmsg(char *msg);
@@ -66,6 +66,7 @@ char menu[]={
 		\r\n 	Type your option here: "
 };
 char count=0;
+int count_timer2;
 uint8_t  command_buffer[20];
 char LED_TOGGLE=0;
 char msg[250];
@@ -88,7 +89,7 @@ int main(void)
 	SystemCoreClockUpdate();
 	prvSetupHardware();
 	GPIO_LD4_Setup();
-
+	TIMER_INIT();
 	//SEGGER_SYSVIEW_Conf();
 	//SEGGER_SYSVIEW_Start();
 	//=======================================
@@ -143,6 +144,7 @@ void vTask2_command_handling(void *params)
 		taskENTER_CRITICAL();
 		cmd_code=command_buffer[0];
 		strct_app_command.COMMAND=cmd_code;
+
 		taskEXIT_CRITICAL();
 		/*if(command_buffer[0]=='1')
 		{
@@ -317,4 +319,34 @@ void LED_Toggle(void)
 		Delay();
 		GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
 	}
+}
+
+void TIM2_IRQHandler()
+{
+	count_timer2++;
+
+	if (count_timer2==10000)
+	{
+		count_timer2=0;
+		GPIO_ToggleBits(GPIOD,GPIO_Pin_12);
+		//GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+		sprintf(msg,"Hello from TIMER 2");
+		printmsg(msg);
 	}
+
+}
+void TIMER_INIT(void)
+{
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct ;
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	TIM_TimeBaseInitStruct.TIM_Prescaler=0xFFFF;
+	TIM_TimeBaseInitStruct.TIM_Period=0xFFFF;
+	TIM_TimeBaseInitStruct.TIM_ClockDivision=TIM_CKD_DIV1;
+	//TIM_TimeBaseInitStruct.TIM_RepetitionCounter=;
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
+	NVIC_EnableIRQ(TIM2_IRQn);
+	NVIC_SetPriority(TIM2_IRQn,5);
+	TIM_ITConfig(TIM2, TIM_IT_Update,ENABLE);
+
+}
