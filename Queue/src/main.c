@@ -198,7 +198,8 @@ void vTask3_command_processing(void *params)
 		}
 		else if (app.COMMAND=='3' )
 		{
-			LED_TOGGLE=1;
+			//LED_TOGGLE=1;
+			LED_Toggle();
 
 		}
 
@@ -222,8 +223,8 @@ void vTask5_led_toggle(void *params)
 {
 	while(1)
 	{
-		if(LED_TOGGLE==1)
-			LED_Toggle();
+		//if(LED_TOGGLE==1)
+			//LED_Toggle();
 	}
 	}
 
@@ -322,7 +323,7 @@ void Delay(void)
 
 void led_togglebit(void)
 {
-	GPIO_ToggleBits(GPIOD,GPIO_PinSource12);
+	GPIO_ToggleBits(GPIOD,GPIO_Pin_12);
 	}
 void LED_Toggle(void)
 {
@@ -342,8 +343,16 @@ void LED_Toggle(void)
 		Delay();
 		Delay();
 		Delay();*/
-		led_timer_handle = xTimerCreate("LED-TIMER",pdMS_TO_TICKS(500),pdTRUE,NULL,led_togglebit);
-		xTimerStart(led_timer_handle,portMAX_DELAY);
+		if(led_timer_handle==NULL)
+		{
+			led_timer_handle = xTimerCreate("LED-TIMER",pdMS_TO_TICKS(500),pdTRUE,NULL,led_togglebit);
+			xTimerStart(led_timer_handle,portMAX_DELAY);
+		}
+		else
+		{
+			xTimerStart(led_timer_handle,portMAX_DELAY);
+
+		}
 		/*GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
 		Delay();
 		Delay();
