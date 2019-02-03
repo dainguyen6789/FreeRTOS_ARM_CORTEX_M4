@@ -52,6 +52,7 @@ typedef struct APP_CMD
 }APP_CMD_t;
 uint8_t command_buffer[20];
 uint8_t command_len;
+APP_CMD_t strct_app_command;
 
 char menu[]={
 		"\
@@ -66,6 +67,7 @@ char menu[]={
 };
 char count=0;
 uint8_t  command_buffer[20];
+char LED_TOGGLE=0;
 char msg[250];
 void printmsg(char *msg)
 {
@@ -131,21 +133,32 @@ void vTask1_menu_display(void *params)
 
 void vTask2_command_handling(void *params)
 {
+	char cmd_code;
 	while(1)
 	{
 		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
 		//sprintf(msg,"Hello from Task 2");
 		//printmsg(msg);
-		if(command_buffer[0]=='1')
+		// get command code and save into APP_CMD_t
+		taskENTER_CRITICAL();
+		cmd_code=command_buffer[0];
+		strct_app_command.COMMAND=cmd_code;
+		taskEXIT_CRITICAL();
+		/*if(command_buffer[0]=='1')
+		{
 			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+			LED_TOGGLE=0;
+		}
 		else if(command_buffer[0]=='2')
-			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
-		else if(command_buffer[0]=='3')
 		{
 			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
-
-			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+			LED_TOGGLE=0;
 		}
+		else if(command_buffer[0]=='3')
+		{
+			LED_TOGGLE=1;
+		}*/
+		xQueueSend(command_queue,&strct_app_command,portMAX_DELAY);
 
 
 
@@ -154,8 +167,18 @@ void vTask2_command_handling(void *params)
 
 void vTask3_command_processing(void *params)
 {
+	APP_CMD_t app;
 	while(1)
-	{}
+	{
+		xQueueReceive(command_queue,&app,portMAX_DELAY);
+		if(app.COMMAND=='1')
+			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+		else if (app.COMMAND=='2')
+			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
+		else if (app.COMMAND=='3' )
+			LED_TOGGLE=1;
+
+	}
 }
 void vTask4_uart_write(void *params)
 {
@@ -251,4 +274,47 @@ void GPIO_LD4_Setup(void)
 
 
 
+	}
+
+void Delay(void)
+{
+	int count;
+	for(count=0;count<=20000;count++);
+	}
+
+void LED_Toggle(void)
+{
+	if(LED_TOGGLE==1)
+	{
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+	}
 	}
