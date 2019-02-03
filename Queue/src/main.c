@@ -26,12 +26,16 @@ void vTask1_menu_display(void *params);
 void vTask2_command_handling(void *params);
 void vTask3_command_processing(void *params);
 void vTask4_uart_write(void *params);
+void vTask5_led_toggle(void *params);
+
 static void prvSetupHardware();
 
 TaskHandle_t xTaskHandle_1=NULL;
 TaskHandle_t xTaskHandle_2=NULL;
 TaskHandle_t xTaskHandle_3=NULL;
 TaskHandle_t xTaskHandle_4=NULL;
+TaskHandle_t xTaskHandle_5=NULL;
+TimerHandle_t led_timer_handle = NULL;
 
 QueueHandle_t command_queue=NULL;
 QueueHandle_t uart_write_queue=NULL;
@@ -89,7 +93,6 @@ int main(void)
 	SystemCoreClockUpdate();
 	prvSetupHardware();
 	GPIO_LD4_Setup();
-	TIMER_INIT();
 	//SEGGER_SYSVIEW_Conf();
 	//SEGGER_SYSVIEW_Start();
 	//=======================================
@@ -108,6 +111,7 @@ int main(void)
 		xTaskCreate(vTask2_command_handling,"Task 2 CMD Handling",500,NULL,1,&xTaskHandle_2);//
 		xTaskCreate(vTask3_command_processing,"Task 3 CMD Process",500,NULL,1,&xTaskHandle_3);//
 		xTaskCreate(vTask4_uart_write,"Task 4 UART Write",500,NULL,1,&xTaskHandle_4);//
+		xTaskCreate(vTask5_led_toggle,"Task 5 LEG TOGGLE TASK",500,NULL,1,&xTaskHandle_5);//
 
 		vTaskStartScheduler();
 	}
@@ -124,8 +128,13 @@ void vTask1_menu_display(void *params)
 
 		 /* xQueueSend: Only for use with queues that have a length of one - so the queue is either
 		 * empty or full.*/
+			//taskENTER_CRITICAL();
+			taskENTER_CRITICAL();
+
 			xQueueSend(uart_write_queue,&pData,portMAX_DELAY);
 			xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
+			//taskEXIT_CRITICAL();
+			taskEXIT_CRITICAL();
 
 		//sprintf(msg,menu);
 		//printmsg(msg);
@@ -172,13 +181,29 @@ void vTask3_command_processing(void *params)
 	APP_CMD_t app;
 	while(1)
 	{
+
 		xQueueReceive(command_queue,&app,portMAX_DELAY);
+		//taskENTER_CRITICAL();
+
 		if(app.COMMAND=='1')
+		{
 			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+			LED_TOGGLE=0;
+		}
 		else if (app.COMMAND=='2')
+		{
 			GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
+			LED_TOGGLE=0;
+			//xTimerStart
+		}
 		else if (app.COMMAND=='3' )
+		{
 			LED_TOGGLE=1;
+
+		}
+
+		//taskEXIT_CRITICAL();
+
 
 	}
 }
@@ -192,6 +217,16 @@ void vTask4_uart_write(void *params)
 	}
 
 }
+
+void vTask5_led_toggle(void *params)
+{
+	while(1)
+	{
+		if(LED_TOGGLE==1)
+			LED_Toggle();
+	}
+	}
+
 void USART2_IRQHandler()
 {
 	//
@@ -284,10 +319,32 @@ void Delay(void)
 	for(count=0;count<=20000;count++);
 	}
 
+
+void led_togglebit(void)
+{
+	GPIO_ToggleBits(GPIOD,GPIO_PinSource12);
+	}
 void LED_Toggle(void)
 {
-	if(LED_TOGGLE==1)
+	//if(LED_TOGGLE==1)
 	{
+		/*Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();
+		Delay();*/
+		led_timer_handle = xTimerCreate("LED-TIMER",pdMS_TO_TICKS(500),pdTRUE,NULL,led_togglebit);
+		xTimerStart(led_timer_handle,portMAX_DELAY);
+		/*GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
 		Delay();
 		Delay();
 		Delay();
@@ -302,22 +359,7 @@ void LED_Toggle(void)
 		Delay();
 		Delay();
 		Delay();
-		GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_RESET);
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		Delay();
-		GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
+		GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);*/
 	}
 }
 
@@ -325,13 +367,13 @@ void TIM2_IRQHandler()
 {
 	count_timer2++;
 
-	if (count_timer2==10000)
+	if (count_timer2==10000 && LED_TOGGLE==1)
 	{
 		count_timer2=0;
-		GPIO_ToggleBits(GPIOD,GPIO_Pin_12);
+		//GPIO_ToggleBits(GPIOD,GPIO_Pin_12);
 		//GPIO_WriteBit(GPIOD,GPIO_Pin_12, Bit_SET);
-		sprintf(msg,"Hello from TIMER 2");
-		printmsg(msg);
+		//sprintf(msg,"Hello from TIMER 2");
+		//printmsg(msg);
 	}
 
 }
@@ -350,3 +392,5 @@ void TIMER_INIT(void)
 	TIM_ITConfig(TIM2, TIM_IT_Update,ENABLE);
 
 }
+
+
