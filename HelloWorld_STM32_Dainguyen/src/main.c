@@ -75,7 +75,7 @@ void vTask1(void *params)
 			xSemaphoreGive(xSemaphore);
 		}
 
-		vTaskDelay(500/portTICK_RATE_MS);
+		//vTaskDelay(500/portTICK_RATE_MS);
 		//taskYIELD();///
 
 	};
